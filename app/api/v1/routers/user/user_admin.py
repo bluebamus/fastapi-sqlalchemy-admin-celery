@@ -7,21 +7,49 @@ from app.utils.authentication import generate_password_hash, check_password_hash
 
 
 class UserProfileAdmin(ModelView, model=UserProfile):
-    # UserProfile을 관리하는 뷰
-    form_columns = (
-        "full_name",
-        "bio",
-        "avatar_url",
-        "phone_number",
-        "address",
+    name = "사용자 프로필"
+    name_plural = "사용자 프로필 목록"
+    icon = "fa-solid fa-user"
+    category = "사용자 관리"
+
+    column_list = [UserProfile.id, UserProfile.full_name, "user.username"]
+
+    # form에 표시할 필드
+    form_columns = [
+        UserProfile.user,  # 직접 user_id를 선택하도록 함
+        UserProfile.full_name,
+        UserProfile.bio,
+        UserProfile.avatar_url,
+        UserProfile.phone_number,
+        UserProfile.address,
+    ]
+
+    column_searchable_list = (
+        UserProfile.id,
+        UserProfile.full_name,
     )
 
-    # 1:1 관계에서 `User`와 `UserProfile`을 함께 생성/업데이트하는 방법
-    form_args = {
+    column_sortable_list = (
+        UserProfile.id,
+        UserProfile.full_name,
+        # User.email,
+    )
+
+    column_sortable_list = (UserProfile.id, UserProfile.full_name)
+    column_default_sort = (UserProfile.id, True)
+
+    # 디테일 페이지에서 외래 키 선택 시 보여줄 레이블 설정
+    # 사용자를 검색해서 고르는 방식
+    form_ajax_refs = {
         "user": {
-            "readonly": True,  # 1:1 관계에서 User 정보는 읽기 전용으로 설정
+            "fields": ["username", "email"],  # 검색 가능 필드
+            "order_by": "username",  # 정렬 방식
+            "page_size": 20,  # 한 번에 표시할 사용자 수
         }
     }
+
+    def __str__(self) -> str:
+        return self.username
 
 
 class GroupAdmin(ModelView, model=Group):
@@ -40,8 +68,10 @@ class UserAdmin(ModelView, model=User):
 
     can_create = True
     can_edit = True
-    can_delete = False
+    can_delete = True
     can_view_details = True
+
+    action_disallowed_list = []
 
     """
     name: 이 모델의 표시 이름입니다. 기본값은 클래스 이름입니다.
@@ -50,10 +80,10 @@ class UserAdmin(ModelView, model=User):
     category: 드롭다운 메뉴에서 ModelView 클래스 그룹을 함께 표시할 카테고리 이름입니다.
 
     """
-    name = "User"
-    name_plural = "Users"
+    name = "사용자"
+    name_plural = "사용자 목록"
     icon = "fa-solid fa-user"
-    category = "accounts"
+    category = "사용자 관리"
 
     """
     column_list: 목록 페이지에 표시할 열이나 열 이름의 리스트입니다.
@@ -68,6 +98,7 @@ class UserAdmin(ModelView, model=User):
 
     특정한 모든 열을 수동으로 지정하지 않고도 column_list나 column_details_list에서 "all" 특수 키워드를 사용할 수 있습니다. 예를 들어: column_list = "all"
     """
+
     # 목록 화면에서 표시할 모델 필드를 지정
     # 모델 필드명을 문자열로 지정하는 게 아니라, 모델의 필드를 직접 전달해서 직관적
     column_list = (
@@ -75,14 +106,18 @@ class UserAdmin(ModelView, model=User):
         User.username,
         User.is_active,
     )
+
     # 검색할 때 검색 대상이 되는 모델 필드를 지정
     # 기본적으로 검색어를 포함하는지(contains) 여부로 검색
-    column_searchable_list = (User.username,)
+    column_searchable_list = (
+        User.id,
+        User.username,
+    )
 
     #  정렬할 수 있는 모델 필드를 지정
     column_sortable_list = (
         User.id,
-        # User.username,
+        User.username,
         # User.email,
     )
 
@@ -335,3 +370,48 @@ class UserAdmin(ModelView, model=User):
         # if _password := data.get("hashed_password"):
         #     if _password != model.hashed_password:
         #         data["hashed_password"] = generate_password_hash(_password)
+
+    # ✅ 삭제 후 리디렉션 (예: 사용자 목록 페이지로 이동)
+    # def get_delete_redirect(self):
+    #     return "/admin/userprofile/"  # 삭제 후 목록으로 리디렉트
+
+    """SQLAdmin은 Naive DateTime으로 일시 정보를 생성한다.
+    다른 시간타입을 사용한다면 on_model_change()으로 수정 가능
+
+    async def on_model_change(
+        self, data: dict, model: Todo, is_created: bool, request: Request
+    ) -> None:
+        for key, value in data.items():
+            if not isinstance(value, datetime):
+                continue
+            if value.utcoffset() is not None:
+                continue
+            data[key] = value.astimezone(UTC)"""
+
+    """
+    SQLAdmin은 두 가지 방식으로 열(Column)에 표시할 텍스트 형식을 지정할 수 있는데, 
+    column_formatters 와 column_type_formatters 이 있다. 
+    column_formatters 는 열(모델 필드) 단위로, 
+    column_type_formatters 는 열의 값 자료형에 단위로 형식을 지정한다.
+
+    1. 값 자료형 별로 출력 형식 잡아주기
+    from typing import ClassVar
+    from datetime import datetime
+
+    ...
+
+    column_type_formatters: ClassVar = {
+        datetime: lambda v: v.strftime("%Y-%m-%d %H:%M:%S"),
+    }
+
+    2. 열(Column) 별로 출력 형식 잡아주기
+    자료형(type) 대신 모델필드를 키로 사용하는 점이 다르고, 
+    값에 사용할 호출가능한 객체의 인자가 두 개라는 점도 다르다.
+
+    column_formatters: ClassVar = {
+        Todo.group: lambda m, _: m.group.name,
+    }
+
+    """
+
+    # https://puddingcamp.com/page/c83fd343-190e-4a60-b475-e14438a8978b
