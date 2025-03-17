@@ -187,7 +187,9 @@ class Group(Base):
         DateTime, server_default=func.now(), onupdate=func.now()
     )
     created_by_id: Mapped[int | None] = mapped_column(
-        Integer, ForeignKey("users.id", ondelete="SET NULL")
+        Integer,
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=False,
     )
 
     user_group: Mapped[list["User"]] = relationship(

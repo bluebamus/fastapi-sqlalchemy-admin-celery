@@ -53,7 +53,19 @@ class UserProfileAdmin(ModelView, model=UserProfile):
 
 
 class GroupAdmin(ModelView, model=Group):
-    pass
+    name = "사용자 그룹"
+    name_plural = "사용자 그룹 목록"
+    icon = "fa-solid fa-user"
+    category = "사용자 관리"
+
+    form_columns = [
+        Group.name,
+        Group.description,
+        Group.is_public,
+        Group.created_by_id,
+        Group.user_group,
+        Group.created_by,
+    ]
 
 
 class UserAdmin(ModelView, model=User):
