@@ -6,7 +6,12 @@ from sqlalchemy import pool
 from alembic import context
 
 from app.core.database import Base
-from app.models import user
+from app.models import model
+from celery.backends.database.models import Task, TaskExtended, TaskSet
+
+Task.__table__.metadata = Base.metadata
+TaskExtended.__table__.metadata = Base.metadata
+TaskSet.__table__.metadata = Base.metadata
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

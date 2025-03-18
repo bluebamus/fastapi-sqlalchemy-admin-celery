@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = ""
     VERSION: str = ""
     DESCRIPTION: str = ""
+    ENVIRONMENT: str = ""
 
     DEBUG: bool = False  # 디버그 모드
 
@@ -61,6 +62,8 @@ class Settings(BaseSettings):
     CORS_ALLOW_CREDENTIALS: bool = False
     CORS_ALLOW_METHODS: str = "*"
     CORS_ALLOW_HEADERS: str = "*"
+    CORS_EXPOSE_HEADERS: str = "*"
+    CORS_MAX_AGE: int = 600
 
     # 유효성 검사 예시
     @field_validator("DATABASE_URL")

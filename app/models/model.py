@@ -35,7 +35,7 @@ class UUIDMixin:
     )
 
 
-class User(Base):
+class User(Base, BaseUser):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(
