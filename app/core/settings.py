@@ -65,6 +65,11 @@ class Settings(BaseSettings):
     CORS_EXPOSE_HEADERS: str = "*"
     CORS_MAX_AGE: int = 600
 
+    # CELERY 설정
+    CELERY_BROKER: str = "redis://127.0.0.1:6379/0"
+    CELERY_BACKEND: str = "db+sqlite:///./test.db"
+    CELERY_BEAT_DB_URL: str = "sqlite:///./test.db"
+
     # 유효성 검사 예시
     @field_validator("DATABASE_URL")
     def assemble_db_url(cls, v: Optional[str], values: dict) -> str:

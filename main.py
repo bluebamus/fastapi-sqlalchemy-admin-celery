@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 from app.core.settings import ENV_PATH, settings
 from app.api.v1.routers.admin_app import init_admin
-from app.core.database import engine
-from app.core.database import Base
+from app.core.database import engine, Base, get_db
 from app.core.middleware import CustomCORSMiddleware
-
+from fastapi import Depends
+from sqlalchemy.orm import Session
 from celery import Celery
 
 app = FastAPI(
@@ -24,20 +24,38 @@ custom_cors_middleware = CustomCORSMiddleware(app)
 custom_cors_middleware.configure_cors()
 
 
-celery = Celery(
+celery_app = Celery(
     # __name__,
     "Client Publisher App",
-    broker="redis://127.0.0.1:6379/0",
-    backend="db+sqlite:///./test.db",
+    broker=settings.CELERY_BROKER,
+    backend=settings.CELERY_BACKEND,
+)
+
+# beat_dburi = "sqlite:///./test.db"
+# MySQL: `pip install mysql-connector`
+# beat_dburi = 'mysql+mysqlconnector://root:root@127.0.0.1:3306/celery-schedule'
+# # PostgreSQL: `pip install psycopg2`
+# beat_dburi = 'postgresql+psycopg2://postgres:postgres@127.0.0.1:5432/celery-schedule'
+
+celery_app.conf.update(
+    {
+        "beat_dburi": settings.CELERY_BEAT_DB_URL,
+        "beat_schema": None,  # you can make the scheduler tables under different schema (tested for postgresql, not available in sqlite)
+    }
 )
 
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    warmup.delay()
 
 
-@celery.task
+@celery_app.task
+def warmup():
+    return "ready"
+
+
+@celery_app.task
 def divide(x, y):
     import time
 

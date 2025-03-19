@@ -62,9 +62,7 @@ class GroupAdmin(ModelView, model=Group):
         Group.name,
         Group.description,
         Group.is_public,
-        Group.created_by_id,
         Group.user_group,
-        Group.created_by,
     ]
 
 

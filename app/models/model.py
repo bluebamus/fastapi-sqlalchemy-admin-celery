@@ -186,11 +186,6 @@ class Group(Base):
     updated_at: Mapped[DateTime] = mapped_column(
         DateTime, server_default=func.now(), onupdate=func.now()
     )
-    created_by_id: Mapped[int | None] = mapped_column(
-        Integer,
-        ForeignKey("users.id", ondelete="SET NULL"),
-        nullable=False,
-    )
 
     user_group: Mapped[list["User"]] = relationship(
         "User",
@@ -200,13 +195,10 @@ class Group(Base):
     )
 
     # Group을 만든 사용자와 관계 (일반적인 1:N 관계)
-    created_by: Mapped["User"] = relationship("User", foreign_keys=[created_by_id])
-
     def __repr__(self) -> str:
         return f"Group(id={self.id}, name={self.name})"
 
     __table_args__ = (
-        Index("idx_groups_created_by_id", "created_by_id"),
         Index("idx_groups_name", "name"),
         Index("idx_groups_is_public", "is_public"),
         Index("idx_groups_created_at", "created_at"),
