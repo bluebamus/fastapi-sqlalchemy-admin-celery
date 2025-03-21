@@ -26,8 +26,8 @@ class CeleryTaskAdmin(ModelView, model=Task):
 
 
 class CeleryBeatClockedScheduleAdmin(ModelView, model=ClockedSchedule):
-    name = "Celery Beat ClockedSchedule"
-    name_plural = "Celery Beat ClockedSchedule List"
+    name = "Celery Beat 단일작업 설정"
+    name_plural = "Celery Beat 단일작업 리스트"
     category = "Celery Management"
 
     # 또는 명시적으로 테이블 이름 지정
@@ -56,8 +56,8 @@ class CeleryBeatClockedScheduleAdmin(ModelView, model=ClockedSchedule):
 
 
 class CeleryBeatIntervalScheduleAdmin(ModelView, model=IntervalSchedule):
-    name = "Celery-Beat IntervalSchedule"
-    name_plural = "Celery-Beat IntervalSchedule List"
+    name = "Celery-Beat 시간간격 설정"
+    name_plural = "Celery-Beat 시간간격 리스트"
     category = "Celery Management"
 
     model_class = IntervalSchedule
@@ -91,8 +91,8 @@ class CeleryBeatIntervalScheduleAdmin(ModelView, model=IntervalSchedule):
 
 
 class CeleryBeatCrontabScheduleAdmin(ModelView, model=CrontabSchedule):
-    name = "Celery-Beat CrontabSchedule"
-    name_plural = "Celery-Beat CrontabSchedule List"
+    name = "Celery-Beat 크론탭 설정"
+    name_plural = "Celery-Beat 크론탭 리스트"
     category = "Celery Management"
 
     model_class = CrontabSchedule
@@ -146,8 +146,8 @@ class CeleryBeatCrontabScheduleAdmin(ModelView, model=CrontabSchedule):
 
 
 class CeleryBeatSolarScheduleAdmin(ModelView, model=SolarSchedule):
-    name = "Celery-Beat SolarSchedule"
-    name_plural = "Celery-Beat SolarSchedule List"
+    name = "Celery-Beat 태양/위도 설정"
+    name_plural = "Celery-Beat 태양/위도 리스트"
     category = "Celery Management"
 
     model_class = SolarSchedule
@@ -186,8 +186,8 @@ class CeleryBeatSolarScheduleAdmin(ModelView, model=SolarSchedule):
 
 
 class CeleryBeatPeriodicTaskChangedEventAdmin(ModelView, model=PeriodicTaskChanged):
-    name = "Celery-Beat PeriodicTaskChanged"
-    name_plural = "Celery-Beat PeriodicTaskChanged List"
+    name = "Celery-Beat 변경된 주기적 작업"
+    name_plural = "Celery-Beat 변경된 주기적 작업 리스트"
     category = "Celery Management"
 
     model_class = PeriodicTaskChanged
@@ -206,8 +206,8 @@ class CeleryBeatPeriodicTaskChangedEventAdmin(ModelView, model=PeriodicTaskChang
 
 
 class CeleryBeatPeriodicTaskAdmin(ModelView, model=PeriodicTask):
-    name = "Celery-Beat PeriodicTask"
-    name_plural = "Celery-Beat PeriodicTask List"
+    name = "Celery-Beat 주기적 작업"
+    name_plural = "Celery-Beat 주기적 작업 리스트"
     category = "Celery Management"
 
     model_class = PeriodicTask

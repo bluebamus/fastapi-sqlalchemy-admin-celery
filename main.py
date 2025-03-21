@@ -44,23 +44,14 @@ celery_app.conf.update(
     }
 )
 
-
-@app.get("/")
-async def root():
-    warmup.delay()
-
-
-@celery_app.task
-def warmup():
-    return "ready"
+celery_app.conf.imports = [
+    "app.api.v1.routers.celery.tasks",
+]
 
 
-@celery_app.task
-def divide(x, y):
-    import time
-
-    time.sleep(5)
-    return x / y
+# @app.get("/")
+# async def root():
+#     warmup.delay()
 
 
 # 테스트를 위한 라우트 추가
