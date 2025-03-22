@@ -1,0 +1,32 @@
+# Python 관련
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+
+# 환경설정 파일
+config.json
+secrets.json
+
+# Virtual Environment (venv)
+venv/
+.env/
+*.venv
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Celery 관련 (Beat 스케줄러 파일)
+celerybeat-schedule
+celerybeat.pid
+
+# 데이터베이스 및 캐시 파일
+*.db
+*.sqlite3
+*.sqlite
+*.log
+
+# PyCharm, VSCode, 기타 IDE 설정
+.idea/
+.vscode/
+*.code-workspace
